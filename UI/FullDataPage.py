@@ -19,7 +19,7 @@ class FullDataPage(QWidget):
         self.table.setColumnCount(3)
         self.table.setFixedSize(600, 600)
         self.table.move(50,75)
-        self.table.setHorizontalHeaderLabels(["Time", "Gain (V)", "Phase (V)"])
+        self.table.setHorizontalHeaderLabels(["Time", "Phase (V)", "Gain (V)"])
         self.table.setColumnWidth(0, 200)
         self.table.setColumnWidth(1, 200)
         self.table.setColumnWidth(2, 200)
