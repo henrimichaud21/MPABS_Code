@@ -16,13 +16,14 @@ class FullDataPage(QWidget):
 
         self.table = QTableWidget(self)
         self.table.setRowCount(0)
-        self.table.setColumnCount(3)
+        self.table.setColumnCount(4)
         self.table.setFixedSize(600, 600)
         self.table.move(50,75)
-        self.table.setHorizontalHeaderLabels(["Time", "Phase (V)", "Gain (V)"])
-        self.table.setColumnWidth(0, 200)
-        self.table.setColumnWidth(1, 200)
-        self.table.setColumnWidth(2, 200)
+        self.table.setHorizontalHeaderLabels(["Time","Water Level (cm)", "Phase (V)", "Gain (V)"])
+        self.table.setColumnWidth(0, 150)
+        self.table.setColumnWidth(1, 150)
+        self.table.setColumnWidth(2, 150)
+        self.table.setColumnWidth(3, 150)
 
 
         # Add Export to CSV Button
@@ -52,12 +53,16 @@ class FullDataPage(QWidget):
         self.currentReferenceLabel.setFixedSize(275,30)
         self.currentReferenceLabel.move(50,20)
 
-    def update_table(self, gain_voltage, phase_voltage):
-        row_count = self.table.rowCount()
-        self.table.insertRow(row_count)
-        self.table.setItem(row_count, 0, QTableWidgetItem(datetime.now().strftime("%H:%M:%S")))
-        self.table.setItem(row_count, 1, QTableWidgetItem(str(gain_voltage)))  # Gain in column 1
+    def update_table(self, time, water_level, phase_voltage, gain_voltage):
+        current_time = datetime.now().strftime("%H:%M:%S")
+        
+        row_position = self.table.rowCount()
+        self.table.insertRow(row_position)
+
+        self.table.setItem(row_count, 0, QTableWidgetItem(current_time))
+        self.table.setItem(row_count, 1, QTableWidgetItem(str(water_level)))
         self.table.setItem(row_count, 2, QTableWidgetItem(str(phase_voltage)))  # Phase in column 2
+        self.table.setItem(row_count, 3, QTableWidgetItem(str(gain_voltage)))  # Gain in column 1
         self.table.scrollToBottom()
 
     def open_reference_page(self):
