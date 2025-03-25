@@ -37,28 +37,21 @@ class HomePage(QWidget):
         self.setGeometry(1200, 300, 750, 750)
         self.setWindowTitle("Microstrip Patch Antenna Home Screen")
 
-        # Create VBox Layout
-        hbox00 = QHBoxLayout()
-        hbox01 = QHBoxLayout()
-
         # Add TextFields
         self.antennaLabel = QLabel("Antenna 1 Status: ", self)
         self.antennaLabel.setStyleSheet("font-size: 16px; font-weight: bold;")
         self.antennaLabel.setFixedSize(200, 30)
         self.antennaLabel.move(10,10)
-        # hbox00.addWidget((self.antennaLabel))
 
         self.connectionLabel = QLabel("Not Connected", self)
         self.connectionLabel.setStyleSheet("font-size: 16px; font-weight: bold;")
         self.connectionLabel.setFixedSize(200,30)
         self.connectionLabel.move(250,10)
-        # grid_layout.addWidget((self.connectionLabel))
 
         self.solutionLabel = QLabel("Select Solution Type:", self)
         self.solutionLabel.setStyleSheet("font-size: 16px; font-weight: bold;")
         self.solutionLabel.setFixedSize(200,30)
         self.solutionLabel.move(10,120)
-        # hbox01.addWidget((self.solutionLabel))
 
         self.timeLastReadingLabel = QLabel("Time since last reading: xx:xx", self)
         self.timeLastReadingLabel.setStyleSheet("font-size: 16px; font-weight: bold;")
@@ -74,10 +67,6 @@ class HomePage(QWidget):
         self.connectionCheckbox = QCheckBox("", self)
         self.connectionCheckbox.setFixedSize(30,30)
         self.connectionCheckbox.move(200,10)
-        # hbox00.addWidget((self.connectionCheckbox))
-
-        # Check connection
-        # self.connectionCheckbox.stateChanged.connect(self.check_connection)
 
         # Add Record Button
         self.record_btn = QPushButton("Start Recording Data", self)
@@ -113,10 +102,6 @@ class HomePage(QWidget):
         # Start Serial Communication
         self.serial_thread = None
         self.thread = None
-        # self.is_recording = False
-
-        # Initialize FullDataPage
-        # self.full_data_page = None
 
         self.full_data_page = FullDataPage(self.current_reference_point)
         self.full_data_page.stop_recording_signal.connect(self.handle_stop_recording)
@@ -138,6 +123,8 @@ class HomePage(QWidget):
             self.record_btn.setStyleSheet("")
             self.stop_serial_thread()
         else:
+            self.selected_solution = self.solutionDropdown.currentText()
+            print(f"Recording started with solution: {self.selected_solution}")
             self.record_btn.setText("Stop Recording Data")
             self.record_btn.setStyleSheet("background-color: green")
             self.record_btn.setChecked(True)
@@ -174,10 +161,6 @@ class HomePage(QWidget):
         self.valueLastReadingLabel.setText(f"Value of last reading: {phase_voltage} V")
         if self.full_data_page:
             self.full_data_page.update_table(gain_voltage, phase_voltage)
-
-    def update_full_data_page(self, water_level):
-        if self.full_data_page:
-            self.full_data_page.update_table(water_level) 
     
     def open_reference_page(self):
         self.referencepoint_btn = ReferencePointPage(self.current_reference_point)
