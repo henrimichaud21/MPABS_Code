@@ -1,12 +1,13 @@
 import sys
 import threading
+import serial.tools.list_ports
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import *
 from UI.FullDataPage import FullDataPage
 from UI.ReferencePointPage import ReferencePointPage
 from Threading.SerialThread import SerialThread
 from datetime import datetime
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import *
 
 def setup_toggle_button(button, phrase1, phrase2, home_page_instance):
     button.setCheckable(True)
@@ -122,6 +123,14 @@ class HomePage(QWidget):
 
         self.recorded_data = []
 
+        # Start the timer to check FTDI connection periodically
+        self.connectionTimer = QTimer(self)
+        self.connectionTimer.timeout.connect(self.check_ftdi_connection)
+        self.connectionTimer.start(500)  # Check every 500 miliseconds
+
+        # Run once at startup to set initial state
+        self.check_ftdi_connection()
+
     def handle_stop_recording(self, is_recording):
         if not is_recording:
             self.record_btn.setText("Start Recording Data")
@@ -160,6 +169,9 @@ class HomePage(QWidget):
 
     def update_table(self, gain_voltage, phase_voltage):
         self.recorded_data.append((datetime.now().strftime("%H:%M:%S"), gain_voltage, phase_voltage))
+
+        self.timeLastReadingLabel.setText(f"Time since last reading: {datetime.now().strftime('%H:%M:%S')}")
+        self.valueLastReadingLabel.setText(f"Value of last reading: {phase_voltage} V")
         if self.full_data_page:
             self.full_data_page.update_table(gain_voltage, phase_voltage)
 
@@ -193,3 +205,13 @@ class HomePage(QWidget):
             self.thread.join()
             self.serial_thread = None
             self.thread = None
+    
+    def check_ftdi_connection(self):
+        available_ports = [port.device for port in serial.tools.list_ports.comports()]
+        
+        if "COM4" in available_ports:
+            self.connectionCheckbox.setChecked(True)
+            self.connectionLabel.setText("Connected")
+        else:
+            self.connectionCheckbox.setChecked(False)
+            self.connectionLabel.setText("Not Connected")

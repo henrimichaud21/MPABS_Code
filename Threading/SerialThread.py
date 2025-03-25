@@ -1,13 +1,19 @@
 import serial
 from PyQt5.QtCore import *
 
+# Define port that is being used
+Port_Name = "COM4"
+
+# Define the baud rate that is being used
+Baud_Rate = 115200
+
 class SerialThread(QObject):
     data_received = pyqtSignal(float, float)
 
-    def __init__(self, baudrate=9600):
+    def __init__(self):
         super().__init__()
-        self.port = "COM4"
-        self.baudrate = baudrate
+        self.port = Port_Name
+        self.baudrate = Baud_Rate
         self.running = True
         self.serial_connection = None
 
@@ -20,8 +26,8 @@ class SerialThread(QObject):
                 
                 if self.serial_connection.in_waiting >= 4:  # 32-bit data
                     data = self.serial_connection.read(4)  # Read 4 bytes (32 bits)
-                    phase_value = int.from_bytes(data[:2], "big")  # First 16 bits
-                    gain_value = int.from_bytes(data[2:], "big")  # Last 16 bits
+                    gain_value = int.from_bytes(data[:2], "big")  # First 16 bits
+                    phase_value = int.from_bytes(data[2:], "big")  # Last 16 bits
 
                     # Convert to voltage
                     phase_voltage = round((phase_value * 3.3) / 4096, 3)
