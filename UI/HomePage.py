@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import *
 from UI.FullDataPage import FullDataPage
 from UI.ReferencePointPage import ReferencePointPage
 from Threading.SerialThread import SerialThread
+from Util.WaterLevelCalculator import WaterLevelCalculator
 from datetime import datetime
 from PyQt5.QtCore import *
 
@@ -152,15 +153,17 @@ class HomePage(QWidget):
         self.full_data_page.show()
 
         for entry in self.recorded_data:
-            self.full_data_page.update_table(entry[1], entry[2]) 
+            self.full_data_page.update_table(entry[0], entry[1], entry[2], entry[3]) 
 
     def update_table(self, gain_voltage, phase_voltage):
-        self.recorded_data.append((datetime.now().strftime("%H:%M:%S"), gain_voltage, phase_voltage))
+        water_level = self.calculate_water_level(phase_voltage)
 
         self.timeLastReadingLabel.setText(f"Time since last reading: {datetime.now().strftime('%H:%M:%S')}")
         self.valueLastReadingLabel.setText(f"Value of last reading: {phase_voltage} V")
+
+        self.recorded_data.append((datetime.now().strftime("%H:%M:%S"), water_level, phase_voltage, gain_voltage))
         if self.full_data_page:
-            self.full_data_page.update_table(gain_voltage, phase_voltage)
+            self.full_data_page.update_table(water_level, phase_voltage, gain_voltage)
     
     def open_reference_page(self):
         self.referencepoint_btn = ReferencePointPage(self.current_reference_point)
@@ -198,3 +201,14 @@ class HomePage(QWidget):
         else:
             self.connectionCheckbox.setChecked(False)
             self.connectionLabel.setText("Not Connected")
+
+    def calculate_water_level(self, phase_voltage):
+        selected_solution = self.solutionDropdown.currentText()
+
+        if selected_solution == "Tap Water":
+            return WaterLevelCalculator.calculate_tap_water_level(phase_voltage)
+        elif selected_solution == "Saline Solution":
+            return WaterLevelCalculator.calculate_saline_water_level(phase_voltage)
+        elif selected_solution == "Distilled Solution":
+            return WaterLevelCalculator.calculate_distilled_water_level(phase_voltage)
+        return None
