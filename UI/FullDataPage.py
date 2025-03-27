@@ -9,7 +9,7 @@ from PyQt5.QtCore import pyqtSignal
 
 class FullDataPage(QWidget):
     stop_recording_signal = pyqtSignal(bool)
-    def __init__(self, reference_point):
+    def __init__(self, reference_point, selected_solution):
         super().__init__()
         self.setGeometry(1000, 100, 700, 700)
         self.setWindowTitle("Microstrip Patch Antenna Full Data Page")
@@ -20,7 +20,7 @@ class FullDataPage(QWidget):
         self.table.setFixedSize(600, 600)
         self.table.move(50,75)
         self.table.setHorizontalHeaderLabels(["Time","Water Level (cm)", "Phase (V)", "Gain (V)"])
-        self.table.setColumnWidth(0, 150)
+        self.table.setColumnWidth(0, 100)
         self.table.setColumnWidth(1, 150)
         self.table.setColumnWidth(2, 150)
         self.table.setColumnWidth(3, 150)
@@ -51,18 +51,24 @@ class FullDataPage(QWidget):
         self.currentReferenceLabel = QLabel(f"Reference Point: {self.current_reference_point} cm", self)
         self.currentReferenceLabel.setStyleSheet("font-size: 16px; font-weight: bold;")
         self.currentReferenceLabel.setFixedSize(275,30)
-        self.currentReferenceLabel.move(50,20)
+        self.currentReferenceLabel.move(50,10)
 
-    def update_table(self, time, water_level, phase_voltage, gain_voltage):
+        # Solution Label
+        self.current_solution = selected_solution 
+        self.currentSolutionLabel = QLabel(f"Current Solution: {self.current_solution}", self)
+        self.currentSolutionLabel.setStyleSheet("font-size: 16px; font-weight: bold;")
+        self.currentSolutionLabel.setFixedSize(500,30)
+        self.currentSolutionLabel.move(5,40)
+
+    def update_table(self, current_time, water_level, phase_voltage, gain_voltage):
         current_time = datetime.now().strftime("%H:%M:%S")
-        
-        row_position = self.table.rowCount()
-        self.table.insertRow(row_position)
+        row_count = self.table.rowCount()
+        self.table.insertRow(row_count)
 
         self.table.setItem(row_count, 0, QTableWidgetItem(current_time))
         self.table.setItem(row_count, 1, QTableWidgetItem(str(water_level)))
-        self.table.setItem(row_count, 2, QTableWidgetItem(str(phase_voltage)))  # Phase in column 2
-        self.table.setItem(row_count, 3, QTableWidgetItem(str(gain_voltage)))  # Gain in column 1
+        self.table.setItem(row_count, 2, QTableWidgetItem(str(phase_voltage))) 
+        self.table.setItem(row_count, 3, QTableWidgetItem(str(gain_voltage)))  
         self.table.scrollToBottom()
 
     def open_reference_page(self):
@@ -94,6 +100,11 @@ class FullDataPage(QWidget):
         self.is_recording = is_recording
         self.toggleRecording_btn.setChecked(is_recording)
         self.toggleRecording_btn.setText("Stop" if is_recording else "Resume")
+
+    def update_solution_label(self, new_solution):
+        print(f"Updating label to: {new_solution}") 
+        self.current_solution = new_solution
+        self.currentSolutionLabel.setText(f"Current Solution: {self.current_solution}")
 
     def export_Table(self):
         path, _= QFileDialog.getSaveFileName(self, 'Save File', QDir.homePath() + "/export.csv", "CSV Files(*.csv *.txt)")

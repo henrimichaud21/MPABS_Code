@@ -54,9 +54,9 @@ class HomePage(QWidget):
         self.solutionLabel.setFixedSize(200,30)
         self.solutionLabel.move(10,120)
 
-        self.timeLastReadingLabel = QLabel("Time since last reading: xx:xx", self)
+        self.timeLastReadingLabel = QLabel("Time since last reading: xx:xx:xx", self)
         self.timeLastReadingLabel.setStyleSheet("font-size: 16px; font-weight: bold;")
-        self.timeLastReadingLabel.setFixedSize(250,30)
+        self.timeLastReadingLabel.setFixedSize(500,30)
         self.timeLastReadingLabel.move(10,200)
 
         self.valueLastReadingLabel = QLabel("Value of last reading: x cm", self)
@@ -86,6 +86,8 @@ class HomePage(QWidget):
         self.solutionDropdown.addItems(["Saline Solution", "Distilled Solution", "Tap Solution"])
         self.solutionDropdown.setFixedSize(200, 50)
         self.solutionDropdown.move(10, 150)
+        self.selected_solution = self.solutionDropdown.currentText()
+        self.solutionDropdown.currentTextChanged.connect(self.update_solution_in_fulldata)
 
         # Enter Reference Point Button
         self.referencepoint_btn = QPushButton("Enter Reference Point", self)
@@ -104,8 +106,9 @@ class HomePage(QWidget):
         self.serial_thread = None
         self.thread = None
 
-        self.full_data_page = FullDataPage(self.current_reference_point)
+        self.full_data_page = FullDataPage(self.current_reference_point, self.selected_solution)
         self.full_data_page.stop_recording_signal.connect(self.handle_stop_recording)
+
 
         self.recorded_data = []
 
@@ -125,7 +128,6 @@ class HomePage(QWidget):
             self.stop_serial_thread()
         else:
             self.selected_solution = self.solutionDropdown.currentText()
-            print(f"Recording started with solution: {self.selected_solution}")
             self.record_btn.setText("Stop Recording Data")
             self.record_btn.setStyleSheet("background-color: green")
             self.record_btn.setChecked(True)
@@ -148,7 +150,8 @@ class HomePage(QWidget):
     
     def open_data_page(self):
         if not self.full_data_page:
-            self.full_data_page = FullDataPage(self.current_reference_point)
+            selected_solution = self.solutionDropdown.currentText()
+            self.full_data_page = FullDataPage(self.current_reference_point, selected_solution)
             self.full_data_page.stop_recording_signal.connect(self.handle_stop_recording)
         self.full_data_page.show()
 
@@ -158,12 +161,12 @@ class HomePage(QWidget):
     def update_table(self, gain_voltage, phase_voltage):
         water_level = self.calculate_water_level(phase_voltage)
 
-        self.timeLastReadingLabel.setText(f"Time since last reading: {datetime.now().strftime('%H:%M:%S')}")
+        self.timeLastReadingLabel.setText(f"Time of last reading: {datetime.now().strftime('%H:%M:%S')}")
         self.valueLastReadingLabel.setText(f"Value of last reading: {phase_voltage} V")
 
         self.recorded_data.append((datetime.now().strftime("%H:%M:%S"), water_level, phase_voltage, gain_voltage))
         if self.full_data_page:
-            self.full_data_page.update_table(water_level, phase_voltage, gain_voltage)
+            self.full_data_page.update_table(datetime.now().strftime("%H:%M:%S"), water_level, phase_voltage, gain_voltage)
     
     def open_reference_page(self):
         self.referencepoint_btn = ReferencePointPage(self.current_reference_point)
@@ -204,11 +207,19 @@ class HomePage(QWidget):
 
     def calculate_water_level(self, phase_voltage):
         selected_solution = self.solutionDropdown.currentText()
-
-        if selected_solution == "Tap Water":
-            return WaterLevelCalculator.calculate_tap_water_level(phase_voltage)
+        if selected_solution == "Tap Solution":
+            # if phase_voltage >= 0.9 and phase_voltage <= 1.0:
+            #     return 9.0
+            # else:
+                return WaterLevelCalculator.calculate_tap_water_level(phase_voltage)
         elif selected_solution == "Saline Solution":
             return WaterLevelCalculator.calculate_saline_water_level(phase_voltage)
         elif selected_solution == "Distilled Solution":
             return WaterLevelCalculator.calculate_distilled_water_level(phase_voltage)
         return None
+
+    def update_solution_in_fulldata(self):
+        self.selected_solution = self.solutionDropdown.currentText()
+        new_solution = self.selected_solution
+        print(f"Updating solution to: {new_solution}") 
+        self.full_data_page.update_solution_label(new_solution)
