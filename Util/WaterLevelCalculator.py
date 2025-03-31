@@ -4,15 +4,15 @@ import numpy as np
 class WaterLevelCalculator:
     @staticmethod
     def calculate_tap_water_level(phase_voltage):
-        level = WaterLevelCalculator.solve_poly(0.00774, -0.37544, 3.77367, phase_voltage)
+        level = WaterLevelCalculator.solve_poly(0.00713, -0.36699, 3.7482, phase_voltage)
         return round(level, 2) if level is not None else None
     @staticmethod
     def calculate_saline_water_level(phase_voltage):
-        level = WaterLevelCalculator.solve_poly(0.00806, -0.35802, 3.71559, phase_voltage)
+        level = WaterLevelCalculator.solve_poly(0.00755, -0.35803, 3.69399, phase_voltage)
         return round(level, 2) if level is not None else None
     @staticmethod
     def calculate_distilled_water_level(phase_voltage):
-        level = WaterLevelCalculator.solve_poly(0.01066, -0.43117, 3.96147, phase_voltage)
+        level = WaterLevelCalculator.solve_poly(0.01135, -0.43946, 3.98331, phase_voltage)
         return round(level, 2) if level is not None else None
 
     @staticmethod
