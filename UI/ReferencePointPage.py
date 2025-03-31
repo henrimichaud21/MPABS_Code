@@ -8,13 +8,13 @@ class ReferencePointPage(QWidget):
     referenceChanged = pyqtSignal(str)
     def __init__(self, current_reference="0"):
         super().__init__()
-        self.setGeometry(1000, 100, 250, 150)
+        self.setGeometry(1000, 100, 450, 150)
         self.setWindowTitle("Change Reference Point Page")
 
         # Create "Change reference point to:" label
-        self.referenceLabel = QLabel("Change reference point to:", self)
+        self.referenceLabel = QLabel("Change reference point to (between 3 and 11):", self)
         self.referenceLabel.setStyleSheet("font-size: 16px; font-weight: bold;")
-        self.referenceLabel.setFixedSize(250, 30)
+        self.referenceLabel.setFixedSize(450, 30)
         self.referenceLabel.move(10,10)
 
         # Create input field and "cm" label
