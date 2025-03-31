@@ -20,6 +20,7 @@ class ReferencePointPage(QWidget):
         # Create input field and "cm" label
         self.input_field = QLineEdit(self)
         self.input_field.setPlaceholderText("Enter value")
+        self.input_field.setStyleSheet("font-size: 16px")
         self.input_field.setFixedSize(100, 30)
         self.input_field.move(10,40)
         
@@ -31,12 +32,14 @@ class ReferencePointPage(QWidget):
 
         # Create Apply button
         self.apply_btn = QPushButton("Apply", self)
+        self.apply_btn.setStyleSheet("font-size: 16px")
         self.apply_btn.clicked.connect(self.apply_action)
         self.apply_btn.setFixedSize(100, 30)
         self.apply_btn.move(10, 80)
 
         # Create Cancel button
         self.cancel_btn = QPushButton("Cancel", self)
+        self.cancel_btn.setStyleSheet("font-size: 16px")
         self.cancel_btn.clicked.connect(self.cancel_action)
         self.cancel_btn.setFixedSize(100, 30)
         self.cancel_btn.move(120, 80)
