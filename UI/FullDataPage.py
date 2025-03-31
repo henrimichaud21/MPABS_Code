@@ -16,14 +16,15 @@ class FullDataPage(QWidget):
 
         self.table = QTableWidget(self)
         self.table.setRowCount(0)
-        self.table.setColumnCount(4)
+        self.table.setColumnCount(5)
         self.table.setFixedSize(600, 600)
         self.table.move(50,75)
-        self.table.setHorizontalHeaderLabels(["Time","Water Level (cm)", "Phase (V)", "Gain (V)"])
+        self.table.setHorizontalHeaderLabels(["Time","Water\nLevel (cm)", "Phase (V)", "Gain (V)", "Difference From\nRef. Point (cm)"])
         self.table.setColumnWidth(0, 100)
-        self.table.setColumnWidth(1, 150)
-        self.table.setColumnWidth(2, 150)
-        self.table.setColumnWidth(3, 150)
+        self.table.setColumnWidth(1, 100)
+        self.table.setColumnWidth(2, 125)
+        self.table.setColumnWidth(3, 125)
+        self.table.setColumnWidth(4, 150)
 
 
         # Add Export to CSV Button
@@ -55,10 +56,10 @@ class FullDataPage(QWidget):
 
         # Solution Label
         self.current_solution = selected_solution 
-        self.currentSolutionLabel = QLabel(f"Current Solution: {self.current_solution}", self)
+        self.currentSolutionLabel = QLabel(f"Solution: {self.current_solution}", self)
         self.currentSolutionLabel.setStyleSheet("font-size: 16px; font-weight: bold;")
         self.currentSolutionLabel.setFixedSize(500,30)
-        self.currentSolutionLabel.move(5,40)
+        self.currentSolutionLabel.move(50,40)
 
     def update_table(self, current_time, water_level, phase_voltage, gain_voltage):
         current_time = datetime.now().strftime("%H:%M:%S")
