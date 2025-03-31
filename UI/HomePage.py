@@ -73,10 +73,12 @@ class HomePage(QWidget):
         self.record_btn = QPushButton("Start Recording Data", self)
         self.record_btn.setFixedSize(200, 50)
         self.record_btn.move(220, 150)
+        self.record_btn.setStyleSheet("font-size: 16px")
         setup_toggle_button(self.record_btn, "Stop Recording Data", "Start Recording Data", self)
 
         # Add View Full Data Button
         self.dataPage_btn = QPushButton("View Full Data", self)
+        self.dataPage_btn.setStyleSheet("font-size: 16px")
         self.dataPage_btn.setFixedSize(200, 50)
         self.dataPage_btn.move(430, 150)
         self.dataPage_btn.clicked.connect(self.open_data_page)
@@ -84,6 +86,7 @@ class HomePage(QWidget):
         # Dropdown
         self.solutionDropdown = QComboBox(self)
         self.solutionDropdown.addItems(["Saline Solution", "Distilled Solution", "Tap Solution"])
+        self.solutionDropdown.setStyleSheet("font-size: 16px")
         self.solutionDropdown.setFixedSize(200, 50)
         self.solutionDropdown.move(10, 150)
         self.selected_solution = self.solutionDropdown.currentText()
@@ -91,12 +94,13 @@ class HomePage(QWidget):
 
         # Enter Reference Point Button
         self.referencepoint_btn = QPushButton("Enter Reference Point", self)
+        self.referencepoint_btn.setStyleSheet("font-size: 16px")
         self.referencepoint_btn.setFixedSize(175, 50)
         self.referencepoint_btn.move(10, 55)
         self.referencepoint_btn.clicked.connect(self.open_reference_page)
 
         # Reference Point Label
-        self.current_reference_point = "0"
+        self.current_reference_point = 0
         self.currentReferenceLabel = QLabel(f"Current Reference Point: {self.current_reference_point} cm", self)
         self.currentReferenceLabel.setStyleSheet("font-size: 16px; font-weight: bold;")
         self.currentReferenceLabel.setFixedSize(275,30)
@@ -160,13 +164,14 @@ class HomePage(QWidget):
 
     def update_table(self, gain_voltage, phase_voltage):
         water_level = self.calculate_water_level(phase_voltage)
+        difference = water_level - self.current_reference_point
 
         self.timeLastReadingLabel.setText(f"Time of last reading: {datetime.now().strftime('%H:%M:%S')}")
         self.valueLastReadingLabel.setText(f"Value of last reading: {phase_voltage} V")
 
-        self.recorded_data.append((datetime.now().strftime("%H:%M:%S"), water_level, phase_voltage, gain_voltage))
+        self.recorded_data.append((datetime.now().strftime("%H:%M:%S"), water_level, phase_voltage, gain_voltage, difference))
         if self.full_data_page:
-            self.full_data_page.update_table(datetime.now().strftime("%H:%M:%S"), water_level, phase_voltage, gain_voltage)
+            self.full_data_page.update_table(datetime.now().strftime("%H:%M:%S"), water_level, phase_voltage, gain_voltage, difference)
     
     def open_reference_page(self):
         self.referencepoint_btn = ReferencePointPage(self.current_reference_point)

@@ -2,6 +2,7 @@ import sys
 import csv
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
 from PyQt5.QtCore import QDir
 from UI.ReferencePointPage import ReferencePointPage
 from datetime import datetime
@@ -14,12 +15,17 @@ class FullDataPage(QWidget):
         self.setGeometry(1000, 100, 700, 700)
         self.setWindowTitle("Microstrip Patch Antenna Full Data Page")
 
+        font = QFont()
+        font.setPointSize(9)
+        font.setBold(True)
+
         self.table = QTableWidget(self)
         self.table.setRowCount(0)
         self.table.setColumnCount(5)
         self.table.setFixedSize(600, 600)
         self.table.move(50,75)
         self.table.setHorizontalHeaderLabels(["Time","Water\nLevel (cm)", "Phase (V)", "Gain (V)", "Difference From\nRef. Point (cm)"])
+        self.table.horizontalHeader().setFont(font)
         self.table.setColumnWidth(0, 100)
         self.table.setColumnWidth(1, 100)
         self.table.setColumnWidth(2, 125)
@@ -29,18 +35,21 @@ class FullDataPage(QWidget):
 
         # Add Export to CSV Button
         self.exportData_btn = QPushButton("Export Data", self)
+        self.exportData_btn.setStyleSheet("font-size: 16px")
         self.exportData_btn.setFixedSize(125, 50)
         self.exportData_btn.move(525, 10)
         self.exportData_btn.clicked.connect(self.export_Table)
 
         # Add Clear Data Button
         self.clearData_btn = QPushButton("Clear Data", self)
+        self.clearData_btn.setStyleSheet("font-size: 16px")
         self.clearData_btn.setFixedSize(125, 50)
         self.clearData_btn.move(400, 10)
         self.clearData_btn.clicked.connect(self.clear_table)
 
         # Stop/Resume Recording Button
         self.toggleRecording_btn = QPushButton("Stop", self)
+        self.toggleRecording_btn.setStyleSheet("font-size: 16px")
         self.toggleRecording_btn.setFixedSize(125, 50)
         self.toggleRecording_btn.move(275, 10)
         self.toggleRecording_btn.clicked.connect(self.toggle_recording)
@@ -61,7 +70,7 @@ class FullDataPage(QWidget):
         self.currentSolutionLabel.setFixedSize(500,30)
         self.currentSolutionLabel.move(50,40)
 
-    def update_table(self, current_time, water_level, phase_voltage, gain_voltage):
+    def update_table(self, current_time, water_level, phase_voltage, gain_voltage, difference):
         current_time = datetime.now().strftime("%H:%M:%S")
         row_count = self.table.rowCount()
         self.table.insertRow(row_count)
@@ -69,7 +78,8 @@ class FullDataPage(QWidget):
         self.table.setItem(row_count, 0, QTableWidgetItem(current_time))
         self.table.setItem(row_count, 1, QTableWidgetItem(str(water_level)))
         self.table.setItem(row_count, 2, QTableWidgetItem(str(phase_voltage))) 
-        self.table.setItem(row_count, 3, QTableWidgetItem(str(gain_voltage)))  
+        self.table.setItem(row_count, 3, QTableWidgetItem(str(gain_voltage)))
+        self.table.setItem(row_count, 4, QTableWidgetItem(str(difference)))   
         self.table.scrollToBottom()
 
     def open_reference_page(self):
