@@ -143,14 +143,6 @@ class HomePage(QWidget):
     def handle_record_button_change(self):
         is_recording = self.record_btn.text() == "Stop"  # Check the current state of the record button
         self.update_toggle_button_signal.emit(is_recording)  # Emit the signal to FullDataPage
-
-    def update_checkbox(self, data):
-        if data == b'\x41':
-            self.connectionCheckbox.setChecked(True)
-            self.connectionLabel.setText("Connected")
-        elif data == b'\x42':
-            self.connectionCheckbox.setChecked(False)
-            self.connectionLabel.setText("Not Connected")
     
     def open_data_page(self):
         if not self.full_data_page:
