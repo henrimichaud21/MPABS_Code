@@ -12,7 +12,7 @@ class FullDataPage(QWidget):
     stop_recording_signal = pyqtSignal(bool)
     def __init__(self, reference_point, selected_solution):
         super().__init__()
-        self.setGeometry(1000, 100, 700, 700)
+        self.setGeometry(1000, 100, 800, 700)
         self.setWindowTitle("Microstrip Patch Antenna Full Data Page")
 
         font = QFont()
@@ -22,7 +22,7 @@ class FullDataPage(QWidget):
         self.table = QTableWidget(self)
         self.table.setRowCount(0)
         self.table.setColumnCount(5)
-        self.table.setFixedSize(600, 600)
+        self.table.setFixedSize(700, 700)
         self.table.move(50,75)
         self.table.setHorizontalHeaderLabels(["Time","Water\nLevel (cm)", "Phase (V)", "Gain (V)", "Difference From\nRef. Point (cm)"])
         self.table.horizontalHeader().setFont(font)
@@ -30,7 +30,7 @@ class FullDataPage(QWidget):
         self.table.setColumnWidth(1, 100)
         self.table.setColumnWidth(2, 125)
         self.table.setColumnWidth(3, 125)
-        self.table.setColumnWidth(4, 150)
+        self.table.setColumnWidth(4, 250)
 
 
         # Add Export to CSV Button
@@ -79,7 +79,7 @@ class FullDataPage(QWidget):
         self.table.setItem(row_count, 1, QTableWidgetItem(str(water_level)))
         self.table.setItem(row_count, 2, QTableWidgetItem(str(phase_voltage))) 
         self.table.setItem(row_count, 3, QTableWidgetItem(str(gain_voltage)))
-        self.table.setItem(row_count, 4, QTableWidgetItem(str(difference)))   
+        self.table.setItem(row_count, 4, QTableWidgetItem(str(difference))) 
         self.table.scrollToBottom()
 
     def open_reference_page(self):
@@ -115,7 +115,7 @@ class FullDataPage(QWidget):
     def update_solution_label(self, new_solution):
         print(f"Updating label to: {new_solution}") 
         self.current_solution = new_solution
-        self.currentSolutionLabel.setText(f"Current Solution: {self.current_solution}")
+        self.currentSolutionLabel.setText(f"Solution: {self.current_solution}")
 
     def export_Table(self):
         path, _= QFileDialog.getSaveFileName(self, 'Save File', QDir.homePath() + "/export.csv", "CSV Files(*.csv *.txt)")

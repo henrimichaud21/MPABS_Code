@@ -21,7 +21,7 @@ class WaterLevelCalculator:
         if discriminant >= 0:
             root1 = (-b + np.sqrt(discriminant)) / (2 * a)
             root2 = (-b - np.sqrt(discriminant)) / (2 * a)
-            return root1 if 3 <= root1 <= 13 else root2 if 3 <= root2 <= 11.4 else None
+            return root1 if 3 <= root1 <= 11.15 else root2 if 3 <= root2 <= 11.15 else None
         else:
             return None
     

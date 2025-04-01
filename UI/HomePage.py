@@ -152,11 +152,15 @@ class HomePage(QWidget):
         self.full_data_page.show()
 
         for entry in self.recorded_data:
-            self.full_data_page.update_table(entry[0], entry[1], entry[2], entry[3]) 
+            self.full_data_page.update_table(entry[0], entry[1], entry[2], entry[3], entry[4]) 
 
     def update_table(self, gain_voltage, phase_voltage):
         water_level = self.calculate_water_level(phase_voltage)
-        difference = water_level - self.current_reference_point
+
+        if water_level is None:
+            difference = None
+        else:
+            difference = round(water_level - self.current_reference_point, 2)
 
         self.timeLastReadingLabel.setText(f"Time of last reading: {datetime.now().strftime('%H:%M:%S')}")
         self.valueLastReadingLabel.setText(f"Value of last reading: {phase_voltage} V")
